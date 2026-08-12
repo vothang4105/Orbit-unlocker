@@ -2,7 +2,7 @@
 :root {
     --bg-primary: #070b14;
     --bg-secondary: #0c1424;
-    --bg-panel: rgba(14, 24, 43, 0.85);
+    --bg-panel: rgba(14, 24, 43, 0.88);
     --border-cyan: #00f5d4;
     --border-subtle: rgba(0, 245, 212, 0.25);
     
@@ -26,7 +26,7 @@
 body.fruit-theme {
     --bg-primary: #122416;
     --bg-secondary: #1a3320;
-    --bg-panel: rgba(20, 42, 26, 0.88);
+    --bg-panel: rgba(20, 42, 26, 0.9);
     --border-cyan: #70e000;
     --border-subtle: rgba(112, 224, 0, 0.3);
 
@@ -42,7 +42,7 @@ body.fruit-theme {
 
 body.fruit-theme #game-canvas {
     background: radial-gradient(circle at center, #1b3a24 0%, #0d1c11 100%);
-    border-color: rgba(112, 224, 0, 0.3);
+    border-color: rgba(112, 224, 0, 0.35);
 }
 
 * {
@@ -51,6 +51,14 @@ body.fruit-theme #game-canvas {
     padding: 0;
     user-select: none;
     -webkit-user-select: none;
+    touch-action: manipulation;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
 }
 
 body {
@@ -60,11 +68,9 @@ body {
         radial-gradient(circle at 80% 20%, rgba(255, 42, 109, 0.05) 0%, transparent 55%);
     color: var(--text-main);
     font-family: var(--font-body);
-    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
     transition: background-color 0.4s ease;
 }
 
@@ -78,13 +84,15 @@ body.fruit-theme {
 .game-container {
     width: 100vw;
     max-width: 850px;
-    height: 100vh;
-    max-height: 920px;
+    height: 100%;
+    height: 100dvh;
+    max-height: 100dvh;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    padding: 16px;
+    padding: 12px;
     position: relative;
+    overflow: hidden;
 }
 
 /* Header HUD */
@@ -96,15 +104,22 @@ body.fruit-theme {
     border: 1px solid var(--border-subtle);
     backdrop-filter: blur(12px);
     border-radius: 12px;
-    padding: 12px 20px;
+    padding: 10px 16px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
 }
 
 .logo {
     font-family: var(--font-heading);
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     font-weight: 900;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
+    line-height: 1.2;
 }
 
 .neon-text-cyan {
@@ -118,21 +133,25 @@ body.fruit-theme {
 }
 
 .player-badge {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
     color: var(--color-yellow);
     background: rgba(245, 208, 32, 0.1);
     border: 1px solid rgba(245, 208, 32, 0.3);
-    padding: 2px 10px;
+    padding: 2px 8px;
     border-radius: 4px;
-    margin-top: 4px;
+    margin-top: 3px;
     display: inline-block;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
+    max-width: 130px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .header-stats {
     display: flex;
-    gap: 20px;
+    gap: 16px;
 }
 
 .stat-box {
@@ -142,7 +161,7 @@ body.fruit-theme {
 }
 
 .stat-label {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     color: var(--text-muted);
     font-weight: 700;
     letter-spacing: 1px;
@@ -150,30 +169,30 @@ body.fruit-theme {
 
 .stat-value {
     font-family: var(--font-heading);
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     font-weight: 700;
     color: #ffffff;
 }
 
 #lives-display {
-    font-size: 1rem;
-    letter-spacing: 2px;
+    font-size: 0.95rem;
+    letter-spacing: 1px;
 }
 
 .header-actions {
     display: flex;
-    gap: 8px;
+    gap: 6px;
 }
 
 .icon-btn {
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-subtle);
     color: var(--text-main);
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1.1rem;
+    font-size: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -184,47 +203,51 @@ body.fruit-theme {
     background: rgba(0, 245, 212, 0.15);
     border-color: var(--color-cyan);
     box-shadow: var(--glow-cyan);
-    transform: translateY(-1px);
 }
 
 /* Canvas Area */
 .canvas-wrapper {
     flex: 1;
+    min-height: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
-    margin: 12px 0;
+    margin: 8px 0;
     cursor: pointer;
+    width: 100%;
 }
 
 #game-canvas {
     width: 100%;
-    height: 100%;
-    max-width: 580px;
-    max-height: 580px;
+    height: auto;
+    max-width: min(100%, 560px, 58vh);
+    max-height: min(100%, 560px, 58vh);
+    aspect-ratio: 1 / 1;
     border-radius: 16px;
     background: radial-gradient(circle at center, #091322 0%, #050913 100%);
     border: 1px solid rgba(0, 245, 212, 0.2);
     box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8), 0 10px 40px rgba(0, 0, 0, 0.5);
     transition: transform 0.1s ease;
+    object-fit: contain;
 }
 
 #game-canvas:active {
-    transform: scale(0.995);
+    transform: scale(0.992);
 }
 
 /* Floating status indicator */
 .ring-status-overlay {
     position: absolute;
-    top: 14px;
-    background: rgba(12, 20, 36, 0.9);
+    top: 10px;
+    background: rgba(12, 20, 36, 0.92);
     border: 1px solid var(--border-subtle);
-    padding: 6px 18px;
+    padding: 5px 14px;
     border-radius: 20px;
     backdrop-filter: blur(8px);
-    font-size: 0.9rem;
+    font-size: 0.82rem;
     color: var(--text-muted);
+    z-index: 10;
 }
 
 .status-indicator strong {
@@ -237,12 +260,13 @@ body.fruit-theme {
     background: var(--bg-panel);
     border: 1px solid var(--border-subtle);
     backdrop-filter: blur(12px);
-    border-radius: 16px;
-    padding: 16px 20px 12px;
+    border-radius: 14px;
+    padding: 12px 16px 10px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.4);
+    flex-shrink: 0;
 }
 
 .ctrl-btn {
@@ -251,14 +275,14 @@ body.fruit-theme {
     color: var(--color-cyan);
     font-family: var(--font-heading);
     font-weight: 700;
-    padding: 18px 24px;
+    padding: 15px 20px;
     border-radius: 12px;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
+    gap: 3px;
     transition: all 0.15s ease-out;
     outline: none;
     box-shadow: 0 4px 20px rgba(0, 245, 212, 0.25);
@@ -272,15 +296,15 @@ body.fruit-theme .ctrl-btn {
 }
 
 .ctrl-btn .btn-text {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     font-weight: 900;
-    letter-spacing: 4px;
+    letter-spacing: 3px;
     color: #ffffff;
-    text-shadow: 0 0 12px var(--color-cyan);
+    text-shadow: 0 0 10px var(--color-cyan);
 }
 
 .ctrl-btn .btn-key {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     color: var(--color-yellow);
     font-family: var(--font-body);
     font-weight: 600;
@@ -290,7 +314,7 @@ body.fruit-theme .ctrl-btn {
 .ctrl-btn:hover {
     background: rgba(0, 245, 212, 0.25);
     box-shadow: 0 0 30px rgba(0, 245, 212, 0.6);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
 }
 
 .ctrl-btn:active, .ctrl-btn.active-press {
@@ -303,9 +327,8 @@ body.fruit-theme .ctrl-btn {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--text-muted);
-    padding-top: 2px;
 }
 
 .footer-subtext {
@@ -319,7 +342,8 @@ body.fruit-theme .ctrl-btn {
     top: 0;
     left: 0;
     width: 100vw;
-    height: 100vh;
+    height: 100%;
+    height: 100dvh;
     background: rgba(4, 8, 16, 0.88);
     backdrop-filter: blur(10px);
     display: flex;
@@ -328,6 +352,7 @@ body.fruit-theme .ctrl-btn {
     z-index: 100;
     opacity: 1;
     transition: opacity 0.3s ease;
+    padding: 12px;
 }
 
 .modal-overlay.hidden {
@@ -341,13 +366,15 @@ body.fruit-theme .ctrl-btn {
     border: 1px solid var(--border-cyan);
     box-shadow: 0 0 40px rgba(0, 245, 212, 0.3);
     border-radius: 16px;
-    padding: 32px;
-    width: 90%;
-    max-width: 480px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 450px;
+    max-height: 90vh;
+    overflow-y: auto;
     text-align: center;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 16px;
     animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
@@ -358,10 +385,10 @@ body.fruit-theme .ctrl-btn {
 
 .modal-title {
     font-family: var(--font-heading);
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     color: var(--color-cyan);
     text-shadow: var(--glow-cyan);
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
 }
 
 .modal-title.game-over-title {
@@ -371,24 +398,24 @@ body.fruit-theme .ctrl-btn {
 
 .modal-desc {
     color: var(--text-main);
-    line-height: 1.5;
-    font-size: 0.95rem;
+    line-height: 1.4;
+    font-size: 0.92rem;
 }
 
 /* Mode / Theme Tabs Selector */
 .mode-selector {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
     background: rgba(0, 0, 0, 0.25);
-    padding: 10px;
+    padding: 8px;
     border-radius: 10px;
     border: 1px solid var(--border-subtle);
 }
 
 .mode-select-label {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 700;
     color: var(--color-yellow);
     letter-spacing: 1px;
@@ -396,22 +423,23 @@ body.fruit-theme .ctrl-btn {
 
 .mode-toggle-buttons {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     width: 100%;
 }
 
 .mode-tab {
     flex: 1;
     font-family: var(--font-heading);
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     font-weight: 700;
-    padding: 8px 12px;
+    padding: 8px 6px;
     border-radius: 6px;
     cursor: pointer;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid var(--border-subtle);
     color: var(--text-muted);
     transition: all 0.2s ease;
+    white-space: nowrap;
 }
 
 .mode-tab.active {
@@ -423,32 +451,32 @@ body.fruit-theme .ctrl-btn {
 
 /* Main Menu Styling */
 .menu-card {
-    max-width: 440px;
-    padding: 36px 32px;
+    max-width: 420px;
+    padding: 32px 24px;
 }
 
 .menu-logo {
-    font-size: 2.2rem;
-    margin-bottom: 4px;
+    font-size: 1.9rem;
+    margin-bottom: 2px;
 }
 
 .menu-options {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    margin-top: 8px;
+    gap: 10px;
+    margin-top: 6px;
 }
 
 .menu-btn {
     font-family: var(--font-heading);
     font-weight: 800;
-    font-size: 1.1rem;
-    padding: 16px 20px;
+    font-size: 1rem;
+    padding: 14px 16px;
     border-radius: 10px;
     cursor: pointer;
     border: 1px solid var(--border-cyan);
     transition: all 0.2s ease;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
 }
 
 .menu-btn.primary {
@@ -460,7 +488,6 @@ body.fruit-theme .ctrl-btn {
 .menu-btn.primary:hover {
     background: var(--color-cyan);
     color: #050913;
-    transform: translateY(-2px);
     box-shadow: 0 0 25px rgba(0, 245, 212, 0.8);
 }
 
@@ -473,19 +500,18 @@ body.fruit-theme .ctrl-btn {
 .menu-btn.secondary:hover {
     background: rgba(255, 255, 255, 0.15);
     border-color: var(--color-cyan);
-    transform: translateY(-2px);
 }
 
 /* Player Form Styling */
 .player-form-group {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     text-align: left;
 }
 
 .form-label {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     font-weight: 700;
     color: var(--color-yellow);
     letter-spacing: 1px;
@@ -493,7 +519,7 @@ body.fruit-theme .ctrl-btn {
 
 .input-row {
     display: flex;
-    gap: 8px;
+    gap: 6px;
 }
 
 #input-player-name {
@@ -501,10 +527,10 @@ body.fruit-theme .ctrl-btn {
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid var(--border-subtle);
     color: #ffffff;
-    padding: 12px 14px;
+    padding: 10px 12px;
     border-radius: 8px;
     font-family: var(--font-body);
-    font-size: 1rem;
+    font-size: 0.95rem;
     outline: none;
 }
 
@@ -519,31 +545,27 @@ body.fruit-theme .ctrl-btn {
     color: white;
     font-family: var(--font-heading);
     font-weight: 700;
-    padding: 0 16px;
+    padding: 0 14px;
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
-}
-
-.form-btn:hover {
-    background: #ff528a;
-    box-shadow: var(--glow-pink);
+    font-size: 0.88rem;
 }
 
 .form-btn.primary {
     background: var(--color-cyan);
     color: #050913;
-    padding: 12px;
+    padding: 10px;
 }
 
 .player-select {
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid var(--border-subtle);
     color: #ffffff;
-    padding: 12px 14px;
+    padding: 10px 12px;
     border-radius: 8px;
     font-family: var(--font-body);
-    font-size: 1rem;
+    font-size: 0.95rem;
     outline: none;
     width: 100%;
 }
@@ -554,20 +576,19 @@ body.fruit-theme .ctrl-btn {
 }
 
 .player-divider {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--text-muted);
     letter-spacing: 1px;
-    position: relative;
-    margin: 4px 0;
+    margin: 2px 0;
 }
 
 /* Leaderboard Styling */
 .leaderboard-card {
-    max-width: 580px;
+    max-width: 520px;
 }
 
 .table-wrapper {
-    max-height: 280px;
+    max-height: 240px;
     overflow-y: auto;
     border: 1px solid var(--border-subtle);
     border-radius: 8px;
@@ -576,7 +597,7 @@ body.fruit-theme .ctrl-btn {
 .leaderboard-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 0.95rem;
+    font-size: 0.88rem;
     text-align: left;
 }
 
@@ -584,32 +605,29 @@ body.fruit-theme .ctrl-btn {
     background: rgba(0, 245, 212, 0.1);
     color: var(--color-cyan);
     font-family: var(--font-heading);
-    padding: 10px 14px;
-    font-size: 0.8rem;
+    padding: 8px 10px;
+    font-size: 0.75rem;
     letter-spacing: 1px;
     position: sticky;
     top: 0;
 }
 
 .leaderboard-table td {
-    padding: 10px 14px;
+    padding: 8px 10px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.leaderboard-table tr:nth-child(even) {
-    background: rgba(255, 255, 255, 0.02);
 }
 
 .rank-badge {
     font-family: var(--font-heading);
     font-weight: 700;
     display: inline-block;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
+    width: 22px;
+    height: 22px;
+    line-height: 22px;
     text-align: center;
     border-radius: 50%;
     background: rgba(255, 255, 255, 0.1);
+    font-size: 0.8rem;
 }
 
 .rank-1 { background: var(--color-yellow); color: #000; }
@@ -619,17 +637,17 @@ body.fruit-theme .ctrl-btn {
 .modal-stats {
     background: rgba(0, 0, 0, 0.3);
     border-radius: 8px;
-    padding: 12px 16px;
+    padding: 10px 14px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
     text-align: left;
 }
 
 .m-stat {
     display: flex;
     justify-content: space-between;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     color: var(--text-muted);
 }
 
@@ -640,18 +658,18 @@ body.fruit-theme .ctrl-btn {
 
 .modal-buttons {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     justify-content: center;
 }
 
 .modal-btn {
     font-family: var(--font-heading);
     font-weight: 700;
-    padding: 12px 24px;
+    padding: 10px 20px;
     border-radius: 8px;
     cursor: pointer;
     border: none;
-    font-size: 1rem;
+    font-size: 0.92rem;
     transition: all 0.2s ease;
 }
 
@@ -661,37 +679,28 @@ body.fruit-theme .ctrl-btn {
     box-shadow: var(--glow-cyan);
 }
 
-.modal-btn.primary:hover {
-    background: #50ffea;
-    transform: translateY(-2px);
-}
-
 .modal-btn.secondary {
     background: rgba(255, 255, 255, 0.1);
     color: var(--text-main);
     border: 1px solid var(--border-subtle);
 }
 
-.modal-btn.secondary:hover {
-    background: rgba(255, 255, 255, 0.2);
-}
-
 /* Help Modal Details */
 .help-card {
-    max-width: 540px;
+    max-width: 500px;
     text-align: left;
 }
 
 .help-content {
     display: flex;
     flex-direction: column;
-    gap: 16px;
-    margin: 8px 0;
+    gap: 12px;
+    margin: 4px 0;
 }
 
 .help-step {
     display: flex;
-    gap: 16px;
+    gap: 12px;
     align-items: flex-start;
 }
 
@@ -700,19 +709,19 @@ body.fruit-theme .ctrl-btn {
     color: white;
     font-family: var(--font-heading);
     font-weight: 900;
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    box-shadow: var(--glow-pink);
+    font-size: 0.85rem;
 }
 
 .help-step p {
-    font-size: 0.95rem;
-    line-height: 1.4;
+    font-size: 0.88rem;
+    line-height: 1.35;
     color: var(--text-main);
 }
 
@@ -720,15 +729,78 @@ body.fruit-theme .ctrl-btn {
     display: none !important;
 }
 
-/* Responsive adjustments */
-@media (max-height: 750px) {
+/* Mobile & Small Screens Media Query Overrides */
+@media (max-width: 600px) {
     .game-container {
         padding: 8px;
     }
+
     .game-header {
-        padding: 8px 14px;
+        padding: 8px 10px;
     }
-    .logo { font-size: 1.1rem; }
-    .control-panel { padding: 10px 14px; }
-    .ctrl-btn { padding: 12px; }
+
+    .logo {
+        font-size: 1.05rem;
+    }
+
+    .player-badge {
+        font-size: 0.65rem;
+        max-width: 100px;
+    }
+
+    .header-stats {
+        gap: 10px;
+    }
+
+    .stat-label {
+        font-size: 0.6rem;
+    }
+
+    .stat-value {
+        font-size: 0.95rem;
+    }
+
+    #lives-display {
+        font-size: 0.85rem;
+    }
+
+    .control-panel {
+        padding: 10px 12px 8px;
+        border-radius: 12px;
+    }
+
+    .ctrl-btn {
+        padding: 13px 14px;
+    }
+
+    .ctrl-btn .btn-text {
+        font-size: 1.05rem;
+        letter-spacing: 2px;
+    }
+
+    .ctrl-btn .btn-key {
+        font-size: 0.68rem;
+    }
+
+    .footer-info {
+        font-size: 0.68rem;
+    }
+
+    .modal-card {
+        padding: 20px 16px;
+        border-radius: 12px;
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+    }
+
+    .menu-logo {
+        font-size: 1.6rem;
+    }
+
+    .menu-btn {
+        padding: 12px 14px;
+        font-size: 0.9rem;
+    }
 }
