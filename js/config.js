@@ -1,7 +1,7 @@
 /**
  * Orbit Unlocker - Global Game Configurations & Level Definitions
  * 10-Level Progression: Cyber & Fruit Modes
- * Positive Scalar Speeds & Centered Partial Ring Arcs
+ * Integrated "Rau má" Fruit Icon (#2ec4b6)
  */
 
 const CONFIG = {
@@ -23,6 +23,7 @@ const CONFIG = {
         nho: '#9d4edd',
         thom: '#ffb703',
         dao: '#ff85a1',
+        rauma: '#2ec4b6', // Bright Pennywort Emerald Green
 
         inactiveTrack: 'rgba(255, 255, 255, 0.08)',
         activeTrack: 'rgba(0, 245, 212, 0.4)',
@@ -290,7 +291,7 @@ const CONFIG = {
             ]
         },
 
-        // Level 7: SONG VÒNG KHUYẾT & XOAY ĐỒNG THỜI (Fixed positive rotationSpeed)
+        // Level 7
         {
             id: 7,
             name: "Màn 7: Song Vòng Khuyết Đồng Thời",
@@ -306,7 +307,7 @@ const CONFIG = {
                     dots: [{ color: 'yellow', angleOffset: 0 }]
                 },
                 {
-                    radius: 110, // Partial Ring (Positive rotationSpeed 75, direction -1)
+                    radius: 110, // Partial Ring
                     rotationSpeed: 75,
                     direction: -1,
                     isPartial: true,
@@ -485,7 +486,7 @@ const CONFIG = {
                     dots: [{ color: 'cyan', angleOffset: 0 }]
                 },
                 {
-                    radius: 85, // Partial Ring
+                    radius: 85,
                     rotationSpeed: 110,
                     direction: -1,
                     isPartial: true,
@@ -508,7 +509,7 @@ const CONFIG = {
                     ]
                 },
                 {
-                    radius: 155, // Partial Ring
+                    radius: 155,
                     rotationSpeed: 145,
                     direction: -1,
                     isPartial: true,
@@ -553,7 +554,7 @@ const CONFIG = {
         }
     ],
 
-    // Fruit Mode Specific Levels (10 Levels)
+    // Fruit Mode Specific Levels (10 Levels - Including "Rau má")
     FRUIT_LEVELS: [
         // Fruit Lvl 1
         {
@@ -580,11 +581,11 @@ const CONFIG = {
             ]
         },
 
-        // Fruit Lvl 2
+        // Fruit Lvl 2 (Introducing Rau má!)
         {
             id: 2,
-            name: "Fruit 2: Vườn Nho & Thơm",
-            desc: "3 vòng xoay đơn lẻ với các trái Dâu, Nho, Thơm.",
+            name: "Fruit 2: Vườn Nho & Rau Má",
+            desc: "3 vòng xoay đơn lẻ với các trái Dâu, Nho, Thơm và lá Rau Má.",
             timeLimit: null,
             groups: [[0], [1], [2]],
             rings: [
@@ -592,8 +593,8 @@ const CONFIG = {
                     radius: 65,
                     rotationSpeed: 55,
                     direction: 1,
-                    arcs: [{ color: 'nho', startAngle: 30, arcWidth: 65 }],
-                    dots: [{ color: 'nho', fruitKey: 'nho', angleOffset: 0 }]
+                    arcs: [{ color: 'rauma', startAngle: 30, arcWidth: 65 }],
+                    dots: [{ color: 'rauma', fruitKey: 'rauma', angleOffset: 0 }]
                 },
                 {
                     radius: 130,
@@ -614,11 +615,11 @@ const CONFIG = {
                     direction: 1,
                     arcs: [
                         { color: 'nho', startAngle: 0, arcWidth: 60 },
-                        { color: 'dao', startAngle: 180, arcWidth: 60 }
+                        { color: 'rauma', startAngle: 180, arcWidth: 60 }
                     ],
                     dots: [
                         { color: 'nho', fruitKey: 'nho', angleOffset: 0 },
-                        { color: 'dao', fruitKey: 'dao', angleOffset: 180 }
+                        { color: 'rauma', fruitKey: 'rauma', angleOffset: 180 }
                     ]
                 }
             ]
@@ -652,11 +653,11 @@ const CONFIG = {
                     direction: 1,
                     arcs: [
                         { color: 'thom', startAngle: 60, arcWidth: 55 },
-                        { color: 'dao', startAngle: 240, arcWidth: 55 }
+                        { color: 'rauma', startAngle: 240, arcWidth: 55 }
                     ],
                     dots: [
                         { color: 'thom', fruitKey: 'thom', angleOffset: 0 },
-                        { color: 'dao', fruitKey: 'dao', angleOffset: 180 }
+                        { color: 'rauma', fruitKey: 'rauma', angleOffset: 180 }
                     ]
                 }
             ]
@@ -665,8 +666,8 @@ const CONFIG = {
         // Fruit Lvl 4
         {
             id: 4,
-            name: "Fruit 4: Mật Mã 4 Quả Nhiệt Đới",
-            desc: "Vòng (1 & 3) xoay cùng lúc! Sau đó Vòng (2 & 4).",
+            name: "Fruit 4: Mật Mã Trái Cây & Rau Má",
+            desc: "Vòng (1 & 3) xoay cùng lúc! Căn nhịp Rau má, Dâu, Thơm, Nho.",
             timeLimit: 85,
             groups: [[0, 2], [1, 3]],
             rings: [
@@ -674,8 +675,8 @@ const CONFIG = {
                     radius: 55,
                     rotationSpeed: 65,
                     direction: 1,
-                    arcs: [{ color: 'dao', startAngle: 30, arcWidth: 50 }],
-                    dots: [{ color: 'dao', fruitKey: 'dao', angleOffset: 0 }]
+                    arcs: [{ color: 'rauma', startAngle: 30, arcWidth: 50 }],
+                    dots: [{ color: 'rauma', fruitKey: 'rauma', angleOffset: 0 }]
                 },
                 {
                     radius: 110,
@@ -703,21 +704,21 @@ const CONFIG = {
                     direction: -1,
                     arcs: [
                         { color: 'dau', startAngle: 90, arcWidth: 50 },
-                        { color: 'dao', startAngle: 270, arcWidth: 50 }
+                        { color: 'rauma', startAngle: 270, arcWidth: 50 }
                     ],
                     dots: [
                         { color: 'dau', fruitKey: 'dau', angleOffset: 0 },
-                        { color: 'dao', fruitKey: 'dao', angleOffset: 180 }
+                        { color: 'rauma', fruitKey: 'rauma', angleOffset: 180 }
                     ]
                 }
             ]
         },
 
-        // Fruit Lvl 5
+        // Fruit Lvl 5 (Rau má Partial Ring)
         {
             id: 5,
             name: "Fruit 5: Giới Thiệu Vòng Khuyết Quả",
-            desc: "Căn thời gian quả Nho trên Vòng Khuyết tự dội ngược.",
+            desc: "Căn thời gian lá Rau Má trên Vòng Khuyết tự dội ngược.",
             timeLimit: 90,
             groups: [[0], [1], [2]],
             rings: [
@@ -729,14 +730,14 @@ const CONFIG = {
                     dots: [{ color: 'dau', fruitKey: 'dau', angleOffset: 0 }]
                 },
                 {
-                    radius: 130, // Partial Ring
+                    radius: 130, // Partial Ring (Single Fruit: Rau má)
                     rotationSpeed: 55,
                     direction: 1,
                     isPartial: true,
                     minAngle: 45,
                     maxAngle: 315,
-                    arcs: [{ color: 'nho', startAngle: 140, arcWidth: 70 }],
-                    dots: [{ color: 'nho', fruitKey: 'nho', angleOffset: 0 }]
+                    arcs: [{ color: 'rauma', startAngle: 140, arcWidth: 70 }],
+                    dots: [{ color: 'rauma', fruitKey: 'rauma', angleOffset: 0 }]
                 },
                 {
                     radius: 195,
@@ -766,8 +767,8 @@ const CONFIG = {
                     radius: 55,
                     rotationSpeed: 55,
                     direction: 1,
-                    arcs: [{ color: 'dao', startAngle: 30, arcWidth: 60 }],
-                    dots: [{ color: 'dao', fruitKey: 'dao', angleOffset: 0 }]
+                    arcs: [{ color: 'rauma', startAngle: 30, arcWidth: 60 }],
+                    dots: [{ color: 'rauma', fruitKey: 'rauma', angleOffset: 0 }]
                 },
                 {
                     radius: 110, // Partial Ring
@@ -794,18 +795,18 @@ const CONFIG = {
                     rotationSpeed: 85,
                     direction: 1,
                     arcs: [
-                        { color: 'nho', startAngle: 0, arcWidth: 55 },
+                        { color: 'rauma', startAngle: 0, arcWidth: 55 },
                         { color: 'dao', startAngle: 180, arcWidth: 55 }
                     ],
                     dots: [
-                        { color: 'nho', fruitKey: 'nho', angleOffset: 0 },
+                        { color: 'rauma', fruitKey: 'rauma', angleOffset: 0 },
                         { color: 'dao', fruitKey: 'dao', angleOffset: 180 }
                     ]
                 }
             ]
         },
 
-        // Fruit Lvl 7 (Fixed positive rotationSpeed)
+        // Fruit Lvl 7
         {
             id: 7,
             name: "Fruit 7: Song Vòng Khuyết Đồng Thời",
@@ -827,8 +828,8 @@ const CONFIG = {
                     isPartial: true,
                     minAngle: 45,
                     maxAngle: 315,
-                    arcs: [{ color: 'thom', startAngle: 140, arcWidth: 50 }],
-                    dots: [{ color: 'thom', fruitKey: 'thom', angleOffset: 0 }]
+                    arcs: [{ color: 'rauma', startAngle: 140, arcWidth: 50 }],
+                    dots: [{ color: 'rauma', fruitKey: 'rauma', angleOffset: 0 }]
                 },
                 {
                     radius: 165, // Partial Ring
@@ -846,11 +847,11 @@ const CONFIG = {
                     direction: -1,
                     arcs: [
                         { color: 'thom', startAngle: 90, arcWidth: 48 },
-                        { color: 'dau', startAngle: 270, arcWidth: 48 }
+                        { color: 'rauma', startAngle: 270, arcWidth: 48 }
                     ],
                     dots: [
                         { color: 'thom', fruitKey: 'thom', angleOffset: 0 },
-                        { color: 'dau', fruitKey: 'dau', angleOffset: 180 }
+                        { color: 'rauma', fruitKey: 'rauma', angleOffset: 180 }
                     ]
                 }
             ]
@@ -878,8 +879,8 @@ const CONFIG = {
                     isPartial: true,
                     minAngle: 45,
                     maxAngle: 315,
-                    arcs: [{ color: 'thom', startAngle: 140, arcWidth: 42 }],
-                    dots: [{ color: 'thom', fruitKey: 'thom', angleOffset: 0 }]
+                    arcs: [{ color: 'rauma', startAngle: 140, arcWidth: 42 }],
+                    dots: [{ color: 'rauma', fruitKey: 'rauma', angleOffset: 0 }]
                 },
                 {
                     radius: 140,
@@ -909,11 +910,11 @@ const CONFIG = {
                     rotationSpeed: 115,
                     direction: 1,
                     arcs: [
-                        { color: 'nho', startAngle: 30, arcWidth: 42 },
+                        { color: 'rauma', startAngle: 30, arcWidth: 42 },
                         { color: 'dao', startAngle: 210, arcWidth: 42 }
                     ],
                     dots: [
-                        { color: 'nho', fruitKey: 'nho', angleOffset: 0 },
+                        { color: 'rauma', fruitKey: 'rauma', angleOffset: 0 },
                         { color: 'dao', fruitKey: 'dao', angleOffset: 180 }
                     ]
                 }
@@ -932,8 +933,8 @@ const CONFIG = {
                     radius: 50,
                     rotationSpeed: 95,
                     direction: 1,
-                    arcs: [{ color: 'dau', startAngle: 0, arcWidth: 35 }],
-                    dots: [{ color: 'dau', fruitKey: 'dau', angleOffset: 0 }]
+                    arcs: [{ color: 'rauma', startAngle: 0, arcWidth: 35 }],
+                    dots: [{ color: 'rauma', fruitKey: 'rauma', angleOffset: 0 }]
                 },
                 {
                     radius: 95,
@@ -961,11 +962,11 @@ const CONFIG = {
                     direction: -1,
                     arcs: [
                         { color: 'dau', startAngle: 120, arcWidth: 35 },
-                        { color: 'thom', startAngle: 300, arcWidth: 35 }
+                        { color: 'rauma', startAngle: 300, arcWidth: 35 }
                     ],
                     dots: [
                         { color: 'dau', fruitKey: 'dau', angleOffset: 0 },
-                        { color: 'thom', fruitKey: 'thom', angleOffset: 180 }
+                        { color: 'rauma', fruitKey: 'rauma', angleOffset: 180 }
                     ]
                 },
                 {
@@ -988,7 +989,7 @@ const CONFIG = {
         {
             id: 10,
             name: "Fruit 10: Thần Trận Trái Cây Vô Địch",
-            desc: "Tất cả 6 vòng xoay đồng thời cùng lúc! Vòng Khuyết 1 loại quả & 4 loại Trái Cây.",
+            desc: "Tất cả 6 vòng xoay đồng thời cùng lúc! Vòng Khuyết & 5 loại Trái Cây/Lá.",
             timeLimit: 90,
             groups: [[0, 1, 2, 3, 4, 5]],
             rings: [
@@ -1006,8 +1007,8 @@ const CONFIG = {
                     isPartial: true,
                     minAngle: 45,
                     maxAngle: 315,
-                    arcs: [{ color: 'dau', startAngle: 140, arcWidth: 28 }],
-                    dots: [{ color: 'dau', fruitKey: 'dau', angleOffset: 0 }]
+                    arcs: [{ color: 'rauma', startAngle: 140, arcWidth: 28 }],
+                    dots: [{ color: 'rauma', fruitKey: 'rauma', angleOffset: 0 }]
                 },
                 {
                     radius: 120,
@@ -1038,30 +1039,30 @@ const CONFIG = {
                     direction: 1,
                     arcs: [
                         { color: 'dau', startAngle: 15, arcWidth: 25 },
-                        { color: 'thom', startAngle: 135, arcWidth: 25 },
+                        { color: 'rauma', startAngle: 135, arcWidth: 25 },
                         { color: 'nho', startAngle: 255, arcWidth: 25 }
                     ],
                     dots: [
                         { color: 'dau', fruitKey: 'dau', angleOffset: 0 },
-                        { color: 'thom', fruitKey: 'thom', angleOffset: 120 },
+                        { color: 'rauma', fruitKey: 'rauma', angleOffset: 120 },
                         { color: 'nho', fruitKey: 'nho', angleOffset: 240 }
                     ]
                 },
                 {
                     radius: 230,
-                    rotationSpeed: 175,
+                    rotationSpeed: -175,
                     direction: -1,
                     arcs: [
                         { color: 'nho', startAngle: 45, arcWidth: 25 },
                         { color: 'dao', startAngle: 135, arcWidth: 25 },
                         { color: 'thom', startAngle: 225, arcWidth: 25 },
-                        { color: 'dau', startAngle: 315, arcWidth: 25 }
+                        { color: 'rauma', startAngle: 315, arcWidth: 25 }
                     ],
                     dots: [
                         { color: 'nho', fruitKey: 'nho', angleOffset: 0 },
                         { color: 'dao', fruitKey: 'dao', angleOffset: 90 },
                         { color: 'thom', fruitKey: 'thom', angleOffset: 180 },
-                        { color: 'dau', fruitKey: 'dau', angleOffset: 270 }
+                        { color: 'rauma', fruitKey: 'rauma', angleOffset: 270 }
                     ]
                 }
             ]

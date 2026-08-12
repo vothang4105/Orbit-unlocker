@@ -1,56 +1,58 @@
 /**
- * Orbit Unlocker - Image Loader Utility for Fruit Mode
+ * Orbit Unlocker - Fruit Image Asset Loader
+ * Preloads transparent PNG fruit icons: Dâu, Nho, Thơm, Đào, Rau má
  */
 
 class ImageLoader {
     constructor() {
         this.images = {};
         this.loadedCount = 0;
-        this.totalImages = 0;
-        this.isReady = false;
+        this.totalCount = 0;
+        this.isLoaded = false;
 
-        this.FRUIT_PATHS = {
-            dau: 'js/Icon/Fruits/Dâu.png',
-            nho: 'js/Icon/Fruits/Nho.png',
-            thom: 'js/Icon/Fruits/Thơm.png',
-            dao: 'js/Icon/Fruits/Đào.png'
+        this.fruitPaths = {
+            'dau': 'js/Icon/Fruits/Dâu.png',
+            'nho': 'js/Icon/Fruits/Nho.png',
+            'thom': 'js/Icon/Fruits/Thơm.png',
+            'dao': 'js/Icon/Fruits/Đào.png',
+            'rauma': 'js/Icon/Fruits/RauMa.png'
         };
     }
 
     preloadAll(onComplete) {
-        const keys = Object.keys(this.FRUIT_PATHS);
-        this.totalImages = keys.length;
+        const keys = Object.keys(this.fruitPaths);
+        this.totalCount = keys.length;
 
-        if (this.totalImages === 0) {
-            this.isReady = true;
+        if (this.totalCount === 0) {
+            this.isLoaded = true;
             if (onComplete) onComplete();
             return;
         }
 
         keys.forEach(key => {
             const img = new Image();
+            img.src = this.fruitPaths[key];
             img.onload = () => {
+                this.images[key] = img;
                 this.loadedCount++;
-                if (this.loadedCount >= this.totalImages) {
-                    this.isReady = true;
+                if (this.loadedCount >= this.totalCount) {
+                    this.isLoaded = true;
                     if (onComplete) onComplete();
                 }
             };
-            img.onerror = (err) => {
-                console.warn(`Failed to load fruit image for ${key}:`, err);
+            img.onerror = (e) => {
+                console.warn(`Failed to load fruit image: ${key}`, e);
                 this.loadedCount++;
-                if (this.loadedCount >= this.totalImages) {
-                    this.isReady = true;
+                if (this.loadedCount >= this.totalCount) {
+                    this.isLoaded = true;
                     if (onComplete) onComplete();
                 }
             };
-            img.src = this.FRUIT_PATHS[key];
-            this.images[key] = img;
         });
     }
 
-    getImage(fruitKey) {
-        return this.images[fruitKey] || null;
+    getImage(key) {
+        return this.images[key] || null;
     }
 }
 

@@ -1,5 +1,6 @@
 /**
- * Orbit Unlocker - Web Audio API Sound Generator
+ * Orbit Unlocker - Web Audio API Sound Generator & Background Music System
+ * Supports afWlg9a8kLTH.128.mp3 BGM with Sync Toggle (Mute/Unmute)
  */
 
 class SoundSystem {
@@ -7,6 +8,16 @@ class SoundSystem {
         this.ctx = null;
         this.muted = false;
         this.initialized = false;
+
+        // Background Music (BGM) setup
+        try {
+            this.bgm = new Audio('Sound/afWlg9a8kLTH.128.mp3');
+            this.bgm.loop = true;
+            this.bgm.volume = 0.35;
+        } catch (e) {
+            console.warn("Audio element loading failed:", e);
+            this.bgm = null;
+        }
     }
 
     init() {
@@ -28,8 +39,40 @@ class SoundSystem {
         }
     }
 
+    /**
+     * Start playing background music if not muted
+     */
+    startBGM() {
+        this.init();
+        this.ensureResume();
+        if (this.muted || !this.bgm) return;
+
+        if (this.bgm.paused) {
+            this.bgm.play().catch(err => {
+                console.log("BGM playback waiting for user interaction:", err);
+            });
+        }
+    }
+
+    /**
+     * Pause background music
+     */
+    pauseBGM() {
+        if (this.bgm && !this.bgm.paused) {
+            this.bgm.pause();
+        }
+    }
+
+    /**
+     * Toggle Mute/Unmute for BOTH SFX & BGM simultaneously
+     */
     toggleMute() {
         this.muted = !this.muted;
+        if (this.muted) {
+            this.pauseBGM();
+        } else {
+            this.startBGM();
+        }
         return this.muted;
     }
 

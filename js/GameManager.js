@@ -1,6 +1,7 @@
 /**
  * Orbit Unlocker - Main Game Manager & State Machine
- * 3-Lives Fail System, Penalties & Cyber/Fruit Modes
+ * 3-Lives Fail System, Penalties, BGM Sync & Cyber/Fruit Modes
+ * Supports 18 Random Victory Praise & Troll Phrases
  */
 
 class GameManager {
@@ -41,7 +42,6 @@ class GameManager {
             btnSound: document.getElementById('btn-sound'),
             btnMenu: document.getElementById('btn-menu'),
             unlockBtnText: document.getElementById('unlock-btn-text'),
-            footerHint: document.getElementById('footer-hint'),
             
             // Mode Tabs
             tabModeCyber: document.getElementById('tab-mode-cyber'),
@@ -86,7 +86,7 @@ class GameManager {
 
     init() {
         this.imageLoader.preloadAll(() => {
-            console.log("Fruit images preloaded successfully!");
+            console.log("Fruit & Rau má images preloaded successfully!");
         });
 
         this.setupEventListeners();
@@ -112,6 +112,7 @@ class GameManager {
         });
 
         this.dom.btnMenuStart.addEventListener('click', () => {
+            this.sound.startBGM();
             this.openPlayerModal();
         });
 
@@ -128,6 +129,7 @@ class GameManager {
         });
 
         this.dom.btnCreatePlayer.addEventListener('click', () => {
+            this.sound.startBGM();
             const name = this.dom.inputPlayerName.value;
             const player = this.playerMgr.addPlayer(name);
             if (player) {
@@ -141,6 +143,7 @@ class GameManager {
         });
 
         this.dom.btnSelectPlayer.addEventListener('click', () => {
+            this.sound.startBGM();
             const selectedId = this.dom.selectExistingPlayer.value;
             if (selectedId) {
                 this.playerMgr.setActivePlayer(selectedId);
@@ -161,6 +164,7 @@ class GameManager {
         });
 
         this.dom.goBtnNext.addEventListener('click', () => {
+            this.sound.startBGM();
             this.dom.gameOverModal.classList.add('hidden');
             if (this.state === 'LEVEL_COMPLETE') {
                 const levels = this.getCurrentLevels();
@@ -186,15 +190,13 @@ class GameManager {
             this.dom.appLogo.innerHTML = `<span style="color:#ff3366;">FRUIT</span> <span style="color:#70e000;">PARADISE</span>`;
             this.dom.menuLogoDisplay.innerHTML = `<span style="color:#ff3366;">FRUIT</span> <span style="color:#70e000;">PARADISE</span>`;
             this.dom.unlockBtnText.textContent = "THU HOẠCH QUẢ";
-            this.dom.footerHint.textContent = "Căn thời gian quả Dâu, Nho, Thơm, Đào đi vào đúng khay trái cây!";
         } else {
             document.body.className = 'cyber-theme';
             this.dom.tabModeCyber.classList.add('active');
             this.dom.tabModeFruit.classList.remove('active');
             this.dom.appLogo.innerHTML = `<span class="neon-text-cyan">ORBIT</span> <span class="neon-text-pink">UNLOCKER</span>`;
             this.dom.menuLogoDisplay.innerHTML = `<span class="neon-text-cyan">ORBIT</span> <span class="neon-text-pink">UNLOCKER</span>`;
-            this.dom.unlockBtnText.textContent = "MỞ VÒNG";
-            this.dom.footerHint.textContent = "Căn đúng lúc tất cả vòng đang xoay để chốt khóa! Nhấn sai 3 lần sẽ bị THUA.";
+            this.dom.unlockBtnText.textContent = "LỤM";
         }
     }
 
@@ -225,7 +227,6 @@ class GameManager {
         players.forEach(p => {
             const opt = document.createElement('option');
             opt.value = p.id;
-            // Short concise format to avoid select box overflow on mobile
             opt.textContent = `${p.name} | ${p.highScore}đ - Lv${p.maxLevel}`;
             if (p.id === this.playerMgr.activePlayerId) {
                 opt.selected = true;
@@ -260,6 +261,8 @@ class GameManager {
     }
 
     startLevel(levelIndex) {
+        this.sound.startBGM();
+
         this.currentLevelIndex = levelIndex;
         const levels = this.getCurrentLevels();
         const levelData = levels[levelIndex] || levels[0];
@@ -327,6 +330,8 @@ class GameManager {
     }
 
     attemptUnlock() {
+        this.sound.startBGM();
+
         if (this.state !== 'PLAYING') return;
 
         const activeGroup = this.getActiveGroup();
@@ -403,12 +408,34 @@ class GameManager {
         const activePlayer = this.playerMgr.getActivePlayer();
         this.playerMgr.updatePlayerStats(this.score, CONFIG.LEVELS[this.currentLevelIndex].id);
 
+        const victoryPhrases = [
+            "Giảm sức mạnh con tướng này giúp em!",
+            "Trí thông minh giản dị.",
+            "Đúng là hệ điều hành lỗi, nhưng lỗi này thông minh quá.",
+            "Đúng là con zai của ta !",
+            "Đỉnh thế này thì nhà phát hành game chuẩn bị nerf (giảm sức mạnh) là cái chắc.",
+            "Ê, hack game đúng không? Khai thật đi chứ người bình thường sao làm được thế này!",
+            "Gánh team còng cả lưng, để em mua cho anh/chị cái đai chống gù nhé.",
+            "Chúa tể chạy deadline, chiến thần xử lý khủng hoảng!",
+            "Năng lực này là do lỗi hệ thống à? Sao mượt mà một cách vô lý thế nhờ!",
+            "Gì mà đỉnh cả cụm, nghệ cả củ, giỏi cả vũ trụ thế này!",
+            "Bàn tay này chắc chắn được kích hoạt chế độ 'bàn tay Midas', chạm vào đâu là thành vàng ở đó.",
+            "Xin lỗi vì đã thở chung bầu không khí với một người quá xuất chúng như thế này.",
+            "Bộ não này chắc chắn chạy chip siêu máy tính của NASA chứ người thường không làm thế.",
+            "Gen gì mà trội kinh khủng khiếp vậy, chia bớt cho người ta chút đi!",
+            "Biết là giỏi rồi nhưng cũng vừa vừa phai phải thôi, chừa đường sống cho người khác với.",
+            "Lần sau làm dở đi một tí nhé, giỏi quá nhìn phát ghét á!",
+            "Giỏi thế này rồi ai làm lại anh/chị nữa, tính một mình độc chiếm thế giới hay gì?",
+            "Bớt thông minh lại giùm cái, lóa hết cả mắt em rồi."
+        ];
+
+        const randomPhrase = victoryPhrases[Math.floor(Math.random() * victoryPhrases.length)];
+
         setTimeout(() => {
             this.dom.gameOverModal.classList.remove('hidden');
             this.dom.goModalTitle.textContent = "GIẢI MÃ THÀNH CÔNG!";
             this.dom.goModalTitle.className = "modal-title";
-            const levels = this.getCurrentLevels();
-            this.dom.goModalDesc.textContent = `Xuất sắc! Bạn đã hoàn thành ${levels[this.currentLevelIndex].name}!`;
+            this.dom.goModalDesc.textContent = randomPhrase;
             
             this.dom.goMPlayer.textContent = activePlayer ? activePlayer.name : 'Guest';
             this.dom.goMScore.textContent = this.score;
@@ -480,8 +507,8 @@ class GameManager {
 
         const activeSet = new Set(this.getActiveGroup());
         this.rings.forEach((ring, idx) => {
-            const isActiveGroup = activeSet.has(idx) && this.state === 'PLAYING';
-            ring.render(ctx, cx, cy, isActiveGroup, this.imageLoader);
+            const isActiveRing = activeSet.has(idx) && this.state === 'PLAYING';
+            ring.render(ctx, cx, cy, isActiveRing, this.imageLoader);
         });
 
         this.renderParticles(ctx);
