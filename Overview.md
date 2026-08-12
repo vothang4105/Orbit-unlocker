@@ -1,104 +1,142 @@
-# GAME SPECIFICATION: CIRCULAR LOCKPICKING GAME
-
-## 1. Mổ tả Game (Game Overview)
-- **Tên dự án (dự kiến):** Circular Lockpicking / Orbit Unlocker
-- **Thể loại:** Casual / Puzzle / Rhythm-based Timing
-- **Mô tả ngắn:** Trò chơi thử thách khả năng phản xạ và căn thời gian. Màn chơi gồm các vòng tròn đồng tâm chứa các điểm màu (Dots) di chuyển liên tục. Nhiệm vụ của người chơi là bấm dừng đúng thời điểm để tất cả các điểm màu dừng lại chính xác tại các đoạn cong có màu tương ứng (Arcs).
+# ⚡ ORBIT UNLOCKER & FRUIT PARADISE 🍉
+> **Hệ Thống Game Giải Mã Đĩa Xoay Đồng Tâm & Thu Hoạch Trái Cây Đa Nền Tảng (HTML5 Canvas)**
 
 ---
 
-## 2. Cơ chế chơi (Game Mechanics)
+## 🌟 1. GIỚI THIỆU DỰ ÁN (PROJECT OVERVIEW)
 
-### 2.1 Core Loop (Vòng lặp cốt lõi)
-1. Bắt đầu màn chơi: Các vòng tròn đồng tâm bắt đầu xoay (hoặc các điểm màu di chuyển trên quỹ đạo vòng tròn).
-2. Người chơi quan sát vị trí của **Dot (Điểm màu)** và **Arc (Đoạn cong tương ứng)**.
-3. Người chơi thực hiện thao tác (Nhấn Space / Click / Chạm màn hình) để **khóa/dừng** chuyển động.
-4. **Kiểm tra điều kiện (Hit Detection):**
-   - **Thành công:** Nếu toàn bộ (hoặc điểm thuộc vòng hiện tại) nằm đúng trong phạm vi đoạn cong cùng màu $\rightarrow$ Dừng điểm đó lại.
-   - **Thất bại:** Nếu bấm lệch $\rightarrow$ Báo lỗi (Rung màn hình / Báo Game Over / Reset lại vòng).
-5. **Thắng màn (Win Condition):** Tất cả các điểm màu trên mọi vòng đều được khóa thành công vào đúng vị trí.
+**Orbit Unlocker** (và Chế độ mở rộng **Fruit Paradise**) là trò chơi Arcade / Lockpicking phản xạ thời gian thực được xây dựng bằng công nghệ thuần **HTML5 Canvas** và **Vanilla JavaScript (ES6+)**. 
 
-### 2.2 Quy tắc Toán học & Góc (Angle Logic)
-- Hệ tọa độ cực (Polar Coordinates): Góc $\theta \in [0, 360^\circ)$ hoặc $[0, 2\pi]$.
-- Vị trí thực tế của Dot: `globalAngle = (ringCurrentAngle + dotOffset) % 360`
-- Điều kiện trúng mục tiêu (Hit): `arcStartAngle <= globalAngle <= arcEndAngle` (Cần xử lý trường hợp đè mốc $0^\circ$).
+Trò chơi lấy cảm hứng từ cơ chế phá khóa điện tử trong các tựa game Sci-Fi bom tấn, nơi người người chơi cần căn thời gian chính xác tuyệt đối khi các đĩa xoay đồng tâm mang điểm màu hoặc hoa quả di chuyển với tốc độ biến thiên.
 
 ---
 
-## 3. Các cấp độ & Tiến trình (Levels & Progression)
+## ⚡ 2. CÁC TÍNH NĂNG NỔI BẬT (KEY FEATURES)
 
-Game tăng độ khó dựa trên việc cấu hình dữ liệu (Level Data):
+### 🎨 2 Chế Độ Chơi & Giao Diện Sắc Nét (Dual Themes)
+- **⚡ Cyber Lockpick Mode**: Giao diện Neon Cyberpunk huyền bí với hiệu ứng phát sáng mượt mà, âm thanh chuẩn điện tử Sci-Fi.
+- **🍉 Fruit Paradise Mode**: Giao diện Nhiệt đới rực rỡ với các icon trái cây tách nền trong suốt (**Dâu, Nho, Thơm, Đào**), âm thanh thu hoạch vui nhộn.
 
-* **Level 1 (Dễ/Hướng dẫn):**
-  - 1 đến 2 vòng tròn.
-  - Tốc độ xoay chậm.
-  - Đoạn cong (Arc) rộng (vd: $60^\circ - 90^\circ$).
-  - Chỉ có 1 màu duy nhất.
-* **Level 2 (Trung bình):**
-  - 3 đến 4 vòng tròn.
-  - Các vòng xoay ngược chiều nhau (1 vòng quay thuận kim đồng hồ, 1 vòng quay ngược).
-  - Xuất hiện 2 - 3 màu khác nhau trên cùng một vòng.
-  - Tốc độ xoay tăng dần.
-* **Level 3+ (Khó/Nâng cao):**
-  - 5+ vòng đồng tâm.
-  - Tốc độ xoay biến thiên (nhanh chậm thất thường).
-  - Đoạn cong (Arc) hẹp (vd: $15^\circ - 30^\circ$), đòi hỏi độ chính xác cao.
-  - Thêm cơ chế giới hạn thời gian (Time Limit).
+### 🔄 Cơ Chế Chơi Đa Dạng & Sáng Tạo
+- **Tiến trình Từ Trong Ra Ngoài**: Mở các vòng đồng tâm từ bán kính nhỏ nhất ra đến ngoài cùng.
+- **Xoay Đồng Thời Nhóm Vòng (Simultaneous Rotation)**: Yêu cầu căn nhịp khớp 2 vòng liên tiếp, 2 vòng không liên tiếp hoặc **tất cả 6 vòng đồng thời** trong cùng 1 lần bấm.
+- **Cơ Chế Vòng Khuyết Bật Ngược (Partial Oscillating Ring)**: Vòng không khép kín 360° mà nảy qua nảy lại giữa 2 nút chặn mốc biên (Ping-pong bounce).
 
----
+### 📱 Giao Diện 100dvh Zero-Scroll Tối Ưu Cho Điện Thoại & Máy Tính
+- **Responsive Hoàn Hảo**: Cố định 100dvh vừa khít mọi kích thước màn hình (iPhone, Android, PC, Laptop), không sinh ra thanh cuộn trang.
+- **High-DPI Retina Scaling**: Tự động co giãn đĩa xoay theo tỉ lệ `aspect-ratio: 1 / 1` nhưng giữ độ nét 60fps trên màn hình Retina.
+- **Điều Khiển Đa Nền Tảng**: Hỗ trợ bấm phím `SPACE` / `ENTER` trên máy tính hoặc **chạm trực tiếp màn hình / nút bấm** trên di động với phản hồi tức thì (`0ms delay`).
 
-## 4. Cách vận hành & Luồng dữ liệu (Game Architecture & Flow)
+### 🏆 Hệ Thống Người Chơi & Bảng Kỷ Lục
+- **Quản lý Hồ Sơ Người Chơi (Player Manager)**: Đăng ký tên mới hoặc chọn người chơi cũ từ danh sách dropdown.
+- **Lưu Trữ Kỷ Lục (`localStorage`)**: Lưu trữ điểm cao nhất, cấp độ đạt được và hiển thị Bảng Vàng Kỷ Lục (Leaderboard) chuyên nghiệp.
 
-### 4.1 State Machine (Quản lý trạng thái Game)
-- `INIT`: Khởi tạo Canvas, nạp tài nguyên.
-- `MENU`: Màn hình chờ bắt đầu.
-- `PLAYING`: Vòng lặp Game Loop cập nhật vị trí các vòng/điểm liên tục.
-- `CHECKING`: Đánh giá logic khi người chơi bấm nút.
-- `LEVEL_COMPLETE`: Hiệu ứng chiến thắng, chuyển màn.
-- `GAME_OVER`: Hiệu ứng thua, cho phép chơi lại.
-
-### 4.2 Game Loop
-Sử dụng `requestAnimationFrame(loop)`:
-1. `Update(deltaTime)`: Cập nhật góc quay dựa trên `rotationSpeed * deltaTime`.
-2. `Render(ctx)`:
-   - Clear Canvas.
-   - Vẽ các đường tròn quỹ đạo.
-   - Vẽ các đoạn cong (Arcs) với màu sắc tương ứng.
-   - Vẽ các điểm màu (Dots).
-   - Vẽ hiệu ứng / UI.
+### ❤️ Hệ Thống 3 Mạng & Phạt Điểm
+- **3 Mạng Sống (`❤️❤️❤️`)**: Mỗi lần nhấn sai bị trừ 50 điểm và mất 1 mạng. Nhấn sai quá 3 lần sẽ dẫn tới màn hình **THUA CUỘC (Game Over)**.
 
 ---
 
-## 5. Công nghệ sử dụng (Tech Stack)
+## 🎮 3. CƠ CHẾ VẬN HÀNH & QUY TẮC TOÁN HỌC (GAME MECHANICS)
 
-- **Language:** JavaScript (ES6+ Vanilla).
-- **Rendering API:** HTML5 Canvas API (2D Context).
-- **Styling:** CSS3 (Flexbox căn giữa canvas, màu nền tối/Dark theme).
-- **Markup:** HTML5.
-- **Bundler / Tooling:** Không bắt đầu bằng framework phức tạp (No Webpack/Vite ban đầu), chạy trực tiếp qua Live Server để dễ debug.
+### 3.1 Core Loop (Vòng lặp cốt lõi)
+```mermaid
+flowchart TD
+    A[Bắt đầu màn chơi] --> B[Các đĩa xoay hoạt động theo nhóm]
+    B --> C[Người chơi quan sát vị trí Dot & Arc]
+    C --> D[Nhấn SPACE / Chạm màn hình]
+    D --> E{Hit Detection}
+    E -- Thành công --> F[Khóa thành công vòng hiện tại + Cộng điểm]
+    E -- Thất bại --> G[Trừ 50 điểm + Trừ 1 Mạng + Rung màn hình]
+    F --> H{Hoàn thành tất cả các nhóm?}
+    H -- Chưa --> B
+    H -- Rồi --> I[CHIẾN THẮNG MÀN - Chuyển sang Level mới]
+    G --> J{Còn Mạng?}
+    J -- Còn --> B
+    J -- Hết 3 Mạng --> K[THUA CUỘC - Hiện màn hình Game Over]
+```
+
+### 3.2 Quy Tắc Toán Học & Va Chạm (Trigonometry & Hit Detection)
+- **Hệ tọa độ Cực $\rightarrow$ Đề-các (Polar to Cartesian)**:
+  $$x = cx + r \cdot \cos(\theta)$$
+  $$y = cy + r \cdot \sin(\theta)$$
+- **Tọa độ thực tế của Điểm màu**:
+  $$\theta_{\text{global}} = (\theta_{\text{ring}} + \theta_{\text{offset}}) \pmod{360^\circ}$$
+- **Kiểm tra va chạm chuẩn xác Mốc $0^\circ / 360^\circ$ (Wrap-Around Hit)**:
+  Đoạn cong (Arc) bắt đầu tại $\alpha$ với độ rộng $W$. Va chạm hợp lệ khi:
+  $$\text{Target} \le \theta_{\text{global}} + \text{Tolerance} \quad \text{và} \quad \theta_{\text{global}} - \text{Tolerance} \le \text{Target} + W$$
 
 ---
 
-## 6. Cấu trúc thư mục file (Project File Structure)
+## 🗺️ 4. TIẾN TRÌNH 10 MÀN CHƠI (10-LEVEL ROADMAP)
 
+| Level | Tên Màn Chơi | Loại Vòng Xoay | Tốc Độ | Đặc Điểm & Cơ Chế Nổi Bật |
+| :---: | :--- | :---: | :---: | :--- |
+| **1** | Màn 1: Căn Giờ Cơ Bản | Đơn lẻ (1 vòng/lượt) | Chậm | 2 Vòng 360°, Arc rộng $80^\circ$, 1 màu. |
+| **2** | Màn 2: 3 Vòng Đơn Lẻ | Đơn lẻ (1 vòng/lượt) | Vừa | 3 Vòng 360°, 2 Màu/Quả đối xứng. |
+| **3** | Màn 3: 2 Vòng Liên Tiếp | Đồng thời `[[0,1], [2]]` | Vừa | 2 vòng trong cùng xoay cùng lúc. |
+| **4** | Màn 4: 2 Vòng Xem Kẽ | Đồng thời `[[0,2], [1,3]]` | Nhanh vừa | 2 vòng không liên tiếp xoay cùng lúc. |
+| **5** | Màn 5: Tập Vòng Khuyết | Đơn lẻ | Chậm | **Tập làm quen Vòng Khuyết dội ngược** ($45^\circ \rightarrow 315^\circ$). Arc rất rộng. |
+| **6** | Màn 6: Đa Vòng Khuyết | Đơn lẻ | Vừa | Nhiều Vòng Khuyết dội ngược (mỗi vòng khuyết 1 màu duy nhất). |
+| **7** | Màn 7: Song Vòng Khuyết | Đồng thời `[[0,1], [2,3]]` | Nhanh vừa | Kết hợp 2 vòng xoay đồng thời với Vòng Khuyết. |
+| **8** | Màn 8: Kết Hợp 5 Vòng | Đồng thời `[[0,2,4], [1,3]]` | Nhanh | 3 vòng xoay đồng thời kết hợp Vòng Khuyết 1 màu. |
+| **9** | Màn 9: Thần Trận 5 Vòng | Đồng thời `[[0,2,4], [1,3]]` | Rất nhanh | Màn thử thách tốc độ cao với 5 vòng xoay 360° liên hoàn. |
+| **10**| Màn 10: Thần Trận Vô Địch | Đồng thời `[[0,1,2,3,4,5]]` | Siêu tốc | **CỰC KHÓ! Tất cả 6 vòng xoay đồng thời**, đầy đủ Vòng Khuyết, 4 Màu/Quả, Arc $25^\circ$. |
+
+---
+
+## 🛠️ 5. CẤU TRÚC KIẾN TRÚC MÃ NGUỒN (TECH STACK & CODEBASE)
+
+### Công nghệ sử dụng:
+- **Ngôn ngữ**: Pure Vanilla JavaScript (ES6+ Class OOP).
+- **Đồ họa**: HTML5 Canvas 2D Context API.
+- **Âm thanh**: Web Audio API Synthesizer (tự tổng hợp âm thanh không phụ thuộc file audio bên ngoài).
+- **Styling**: CSS3 Modern Design Tokens, Flexbox, Glassmorphism, Google Fonts (`Orbitron`, `Rajdhani`).
+
+### Cấu trúc thư mục dự án:
 ```text
-circular-lockpicking-game/
-├── index.html          # File chứa Canvas và UI cơ bản
+orbit-unlocker/
+├── index.html              # Cấu trúc HTML5 chứa Canvas, HUD và các Cửa sổ Modal
+├── Overview.md             # Tài liệu giới thiệu tổng quan dự án (File này)
 ├── css/
-│   └── style.css       # Layout, căn giữa canvas, style hiệu ứng
+│   └── style.css           # Design Tokens, Layout 100dvh & Style Responsive Mobile/PC
 ├── js/
-│   ├── config.js       # Chứa Level Data (dạng JSON/Array) và hằng số Game
-│   ├── utils.js        # Các hàm toán học (tính góc, normalize angle, random)
-│   ├── entities/
-│   │   ├── Ring.js     # Class quản lý từng vòng tròn
-│   │   ├── Dot.js      # Class quản lý điểm màu
-│   │   └── Arc.js      # Class quản lý đoạn cong đích
-│   ├── GameManager.js  # Quản lý luồng Game, score, level state
-│   └── main.js         # Entry point (Khởi tạo canvas, lắng nghe sự kiện, chạy Game Loop)
-└── Overview.md           # Tài liệu dự án (File này)
+│   ├── config.js           # Cấu hình hằng số game & Thông số 10 Level (Cyber & Fruit)
+│   ├── utils.js            # Các hàm toán học, đổi tọa độ Cực, kiểm tra va chạm góc
+│   ├── Audio.js            # Trình tổng hợp âm thanh Web Audio API (Click, Win, Fail, Error)
+│   ├── ImageLoader.js      # Trình Preload tài nguyên ảnh trái cây PNG tách nền
+│   ├── PlayerManager.js     # Quản lý hồ sơ người chơi & Lưu trữ Bảng Kỷ Lục localStorage
+│   ├── GameManager.js      # Máy trạng thái chính (State Machine), xử lý mạng sống & HUD
+│   ├── main.js             # Entry Point, resize canvas Retina & Game Loop 60fps
+│   └── entities/
+│       ├── Ring.js         # Entity Đĩa xoay đồng tâm & Logic Vòng Khuyết dội ngược
+│       ├── Arc.js          # Entity Khay màu đích / Khay trái cây
+│       └── Dot.js          # Entity Điểm màu Neon / Icon Trái cây tách nền
+└── js/Icon/Fruits/         # Thư mục chứa 4 ảnh trái cây PNG tách nền trong suốt
+    ├── Dâu.png
+    ├── Nho.png
+    ├── Thơm.png
+    └── Đào.png
+```
 
+---
 
-## 7. Yêu cầu triển khai dành cho Agent (Guidelines for AI Coding Agent)Module hóa: Viết code theo hướng đối tượng (OOP) phân tách rõ ràng theo cấu trúc thư mục trên.Performance: Tránh khởi tạo object mới bên trong hàm Render()/Update() để tối ưu bộ nhớ.Clean Code: Đặt tên biến rõ ràng đại diện cho góc (angle, radians), độ rộng (arcWidth), bán kính (radius).Edge Cases: Bắt buộc xử lý bài toán góc $0^\circ / 360^\circ$ khi kiểm tra Va chạm (Hit Detection).
+## 🌐 6. HƯỚNG DẪN ĐĂNG WEB & CHIA SẺ (DEPLOYMENT)
 
+### Cách 1: Đăng nhanh qua Netlify Drop (Không cần gõ code)
+1. Truy cập: **[app.netlify.com/drop](https://app.netlify.com/drop)**
+2. Kéo cả thư mục dự án `orbit-unlocker` thả vào trang web.
+3. Nhận đường link web công khai để gửi cho bạn bè chơi ngay lập tức!
 
+### Cách 2: Đăng qua GitHub Pages (Đường link chuẩn vĩnh viễn)
+```bash
+git add .
+git commit -m "Initial commit Orbit Unlocker project"
+git push origin main
+```
+Trang web sẽ tự động chạy tại: **`https://vothang4105.github.io/Orbit-unlocker/`**
 
+---
+
+## 📜 7. BẢN QUYỀN (LICENSE)
+
+Dự án được phát triển dưới bản quyền open-source **MIT License**. Bạn có thể tự do trải nghiệm, tùy chỉnh và phát triển thêm các chế độ chơi mới!

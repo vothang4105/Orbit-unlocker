@@ -19,8 +19,9 @@ class Ring {
     constructor(data, index = 0) {
         this.index = index;
         this.radius = data.radius;
-        this.rotationSpeed = data.rotationSpeed || 60;
-        this.direction = data.direction || 1;
+        // Always enforce positive scalar speed
+        this.rotationSpeed = Math.abs(data.rotationSpeed || 60);
+        this.direction = data.direction < 0 ? -1 : 1;
 
         this.isPartial = data.isPartial || false;
         this.minAngle = data.minAngle !== undefined ? data.minAngle : 30;
@@ -28,7 +29,8 @@ class Ring {
 
         // Set initial angle safely within min/max bounds if partial
         if (this.isPartial) {
-            this.currentAngle = this.minAngle + Math.random() * (this.maxAngle - this.minAngle);
+            const midAngle = (this.minAngle + this.maxAngle) / 2;
+            this.currentAngle = midAngle;
         } else {
             this.currentAngle = Math.floor(Math.random() * 360);
         }
@@ -47,21 +49,23 @@ class Ring {
     update(deltaTime) {
         if (this.locked || !this.isSpinning) return;
 
+        const speed = Math.abs(this.rotationSpeed);
+
         if (this.isPartial) {
-            const step = this.rotationSpeed * this.direction * deltaTime;
+            const step = speed * this.direction * deltaTime;
             let nextAngle = this.currentAngle + step;
 
             if (this.direction > 0 && nextAngle >= this.maxAngle) {
                 this.currentAngle = this.maxAngle;
-                this.direction = -1; // Bounce backwards!
+                this.direction = -1; // Reverse & Bounce backwards!
             } else if (this.direction < 0 && nextAngle <= this.minAngle) {
                 this.currentAngle = this.minAngle;
-                this.direction = 1; // Bounce forwards!
+                this.direction = 1; // Reverse & Bounce forwards!
             } else {
-                this.currentAngle = Utils.normalizeAngle(nextAngle);
+                this.currentAngle = nextAngle;
             }
         } else {
-            const deltaAngle = this.rotationSpeed * this.direction * deltaTime;
+            const deltaAngle = speed * this.direction * deltaTime;
             this.currentAngle = Utils.normalizeAngle(this.currentAngle + deltaAngle);
         }
     }
