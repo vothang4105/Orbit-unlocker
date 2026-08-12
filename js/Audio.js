@@ -14,10 +14,32 @@ class SoundSystem {
             this.bgm = new Audio('Sound/afWlg9a8kLTH.128.mp3');
             this.bgm.loop = true;
             this.bgm.volume = 0.35;
+            this.bgm.preload = 'auto';
         } catch (e) {
             console.warn("Audio element loading failed:", e);
             this.bgm = null;
         }
+
+        // Auto-bind first user interaction to unlock browser autoplay policy
+        this.bindUserInteraction();
+    }
+
+    /**
+     * Unlock AudioContext and BGM on first user gesture (click/keypress/touch)
+     */
+    bindUserInteraction() {
+        const unlockAudio = () => {
+            this.init();
+            this.ensureResume();
+            if (!this.muted && this.bgm && this.bgm.paused) {
+                this.startBGM();
+            }
+        };
+
+        window.addEventListener('click', unlockAudio, { once: true });
+        window.addEventListener('keydown', unlockAudio, { once: true });
+        window.addEventListener('pointerdown', unlockAudio, { once: true });
+        window.addEventListener('touchstart', unlockAudio, { once: true });
     }
 
     init() {
