@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orbit Unlocker - Circular Lockpicking & Fruit Game</title>
+    <!-- Modern Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="cyber-theme">
+    <div class="game-container">
+        <!-- Header HUD -->
+        <header class="game-header">
+            <div class="header-left">
+                <h1 class="logo" id="app-logo"><span class="neon-text-cyan">ORBIT</span> <span class="neon-text-pink">UNLOCKER</span></h1>
+                <div class="player-badge" id="player-badge">👤 NGƯỜI CHƠI: <strong id="player-name-display">GUEST</strong></div>
+            </div>
+            <div class="header-stats">
+                <div class="stat-box">
+                    <span class="stat-label">CẤP ĐỘ</span>
+                    <span class="stat-value" id="level-display">LV 1</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">MẠNG</span>
+                    <span class="stat-value" id="lives-display">❤️❤️❤️</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">ĐIỂM SỐ</span>
+                    <span class="stat-value" id="score-display">0000</span>
+                </div>
+                <div class="stat-box">
+                    <span class="stat-label">COMBO</span>
+                    <span class="stat-value" id="combo-display">x1</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="icon-btn" id="btn-sound" title="Bật/Tắt Âm thanh">🔊</button>
+                <button class="icon-btn" id="btn-menu" title="Menu Chính">🏠</button>
+            </div>
+        </header>
+
+        <!-- Canvas Area -->
+        <main class="canvas-wrapper">
+            <canvas id="game-canvas"></canvas>
+            
+            <!-- Floating HUD Overlay -->
+            <div class="ring-status-overlay hidden" id="ring-status">
+                <span class="status-indicator">ĐANG MỞ VÒNG: <strong id="active-ring-index">1 / 2</strong></span>
+            </div>
+        </main>
+
+        <!-- Bottom Control Panel (Big Action Lock Button) -->
+        <footer class="control-panel">
+            <button class="ctrl-btn unlock-btn" id="btn-unlock" data-action="unlock">
+                <span class="btn-text" id="unlock-btn-text">MỞ VÒNG</span>
+                <span class="btn-key">[ BẤM SPACE / ENTER HOẶC CHẠM MÀN HÌNH ]</span>
+            </button>
+            <div class="footer-info">
+                <span class="footer-subtext" id="footer-subtext">/ BỘ TRÒ CHƠI 1.1</span>
+                <span class="footer-hint" id="footer-hint">Căn chỉnh thời điểm đúng lúc! Sai 3 lần sẽ THUA CUỘC.</span>
+            </div>
+        </footer>
+    </div>
+
+    <!-- ==================== MODALS & OVERLAYS ==================== -->
+
+    <!-- Main Menu Screen Modal -->
+    <div class="modal-overlay" id="main-menu-modal">
+        <div class="modal-card menu-card">
+            <h1 class="logo menu-logo" id="menu-logo-display"><span class="neon-text-cyan">ORBIT</span> <span class="neon-text-pink">UNLOCKER</span></h1>
+            <p class="modal-desc">Thử thách quan sát và phản xạ</p>
+            
+            <!-- Theme / Mode Selector -->
+            <div class="mode-selector">
+                <span class="mode-select-label">CHỌN CHẾ ĐỘ CHƠI:</span>
+                <div class="mode-toggle-buttons">
+                    <button class="mode-tab active" id="tab-mode-cyber">🚀 CYBER LOCKPICK</button>
+                    <button class="mode-tab" id="tab-mode-fruit">🍓 FRUIT PARADISE</button>
+                </div>
+            </div>
+
+            <div class="menu-options">
+                <button class="menu-btn primary" id="btn-menu-start">⚡ BẮT ĐẦU CHƠI</button>
+                <button class="menu-btn secondary" id="btn-menu-leaderboard">🏆 KỶ LỤC</button>
+                <button class="menu-btn secondary" id="btn-menu-help">❓ HƯỚNG DẪN CHƠI</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Selection Modal -->
+    <div class="modal-overlay hidden" id="player-modal">
+        <div class="modal-card">
+            <h2 class="modal-title">NHẬP THÔNG TIN NGƯỜI CHƠI</h2>
+            
+            <div class="player-form-group">
+                <label class="form-label">TẠO NGƯỜI CHƠI MỚI:</label>
+                <div class="input-row">
+                    <input type="text" id="input-player-name" placeholder="Nhập tên của bạn..." maxlength="15" autocomplete="off">
+                    <button class="form-btn" id="btn-create-player">TẠO MỚI</button>
+                </div>
+            </div>
+
+            <div class="player-divider">HOẶC CHỌN TỪ DANH SÁCH</div>
+
+            <div class="player-form-group">
+                <label class="form-label">NGƯỜI CHƠI ĐÃ CÓ:</label>
+                <select id="select-existing-player" class="player-select">
+                    <option value="">-- Chọn người chơi --</option>
+                </select>
+                <button class="form-btn primary" id="btn-select-player" style="margin-top: 10px; width: 100%;">CHỌN & VÀO GAME</button>
+            </div>
+
+            <button class="modal-btn secondary" id="btn-close-player-modal" style="margin-top: 10px;">QUAY LẠI</button>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal -->
+    <div class="modal-overlay hidden" id="leaderboard-modal">
+        <div class="modal-card leaderboard-card">
+            <h2 class="modal-title">🏆 BẢNG KỶ LỤC TOP PLAYERS</h2>
+            
+            <div class="table-wrapper">
+                <table class="leaderboard-table">
+                    <thead>
+                        <tr>
+                            <th>HẠNG</th>
+                            <th>NGƯỜI CHƠI</th>
+                            <th>ĐIỂM CAO</th>
+                            <th>MÀN CAO NHẤT</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leaderboard-tbody">
+                        <!-- Dynamic Rows -->
+                    </tbody>
+                </table>
+            </div>
+
+            <button class="modal-btn primary" id="btn-close-leaderboard" style="margin-top: 16px;">ĐÓNG</button>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div class="modal-overlay hidden" id="help-modal">
+        <div class="modal-card help-card">
+            <h2 class="modal-title">HƯỚNG DẪN CHƠI</h2>
+            <div class="help-content">
+                <div class="help-step">
+                    <span class="step-num">1</span>
+                    <p>Bắt đầu đi <strong>từ VÒNG TRONG CÙNG tiến dần RA VÒNG NGOÀI CÙNG</strong>.</p>
+                </div>
+                <div class="help-step">
+                    <span class="step-num">2</span>
+                    <p>Canh thời điểm đúng lúc tất cả vòng đang xoay khớp với vị trí đích để bấm <code>SPACE</code>.</p>
+                </div>
+                <div class="help-step">
+                    <span class="step-num">3</span>
+                    <p>Mỗi lần bấm sai bị <strong>trừ 50 điểm</strong> và mất 1 Mạng `❤️`. Bấm sai lần thứ <strong>3 </strong> sẽ bị <strong>THUA CUỘC</strong>!</p>
+                </div>
+            </div>
+            <button class="modal-btn primary" id="btn-close-help">ĐÃ HIỂU</button>
+        </div>
+    </div>
+
+    <!-- Level Complete / Game Over Modal -->
+    <div class="modal-overlay hidden" id="game-over-modal">
+        <div class="modal-card" id="game-over-card">
+            <h2 class="modal-title" id="go-modal-title">GIẢI MÃ THÀNH CÔNG!</h2>
+            <p class="modal-desc" id="go-modal-desc">Bạn đã hoàn tất thử thách mở khóa đĩa xoay đồng tâm!</p>
+            
+            <div class="modal-stats" id="go-modal-stats">
+                <div class="m-stat"><span>Người chơi:</span> <strong id="go-m-player">Guest</strong></div>
+                <div class="m-stat"><span>Điểm số:</span> <strong id="go-m-score">0</strong></div>
+                <div class="m-stat"><span>Thời gian:</span> <strong id="go-m-time">00:00</strong></div>
+                <div class="m-stat"><span>Số lượt sai:</span> <strong id="go-m-mistakes">0/3</strong></div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="modal-btn primary" id="go-btn-next">MÀN TIẾP THEO</button>
+                <button class="modal-btn secondary" id="go-btn-menu">MENU CHÍNH</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/Audio.js"></script>
+    <script src="js/ImageLoader.js"></script>
+    <script src="js/PlayerManager.js"></script>
+    <script src="js/entities/Dot.js"></script>
+    <script src="js/entities/Arc.js"></script>
+    <script src="js/entities/Ring.js"></script>
+    <script src="js/GameManager.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
