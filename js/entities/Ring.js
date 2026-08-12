@@ -1,5 +1,6 @@
 /**
  * Orbit Unlocker - Ring Entity (Concentric Orbit Ring)
+ * Supports Full 360° Orbits & Partial Oscillating Rings (Ping-Pong Bounce)
  */
 
 class Ring {
@@ -8,6 +9,9 @@ class Ring {
      * @param {number} data.radius - Orbital radius from center
      * @param {number} [data.rotationSpeed=60] - Speed in deg/sec
      * @param {number} [data.direction=1] - 1 = Clockwise, -1 = Counter-clockwise
+     * @param {boolean} [data.isPartial=false] - True if ring is an incomplete arc orbit that bounces
+     * @param {number} [data.minAngle=30] - Start boundary of partial ring (degrees)
+     * @param {number} [data.maxAngle=310] - End boundary of partial ring (degrees)
      * @param {Array<Object>} data.arcs - Arc data configs
      * @param {Array<Object>} data.dots - Dot data configs
      * @param {number} [data.index=0] - Ring index (0 = Innermost)
@@ -17,7 +21,18 @@ class Ring {
         this.radius = data.radius;
         this.rotationSpeed = data.rotationSpeed || 60;
         this.direction = data.direction || 1;
-        this.currentAngle = Math.floor(Math.random() * 360);
+
+        this.isPartial = data.isPartial || false;
+        this.minAngle = data.minAngle !== undefined ? data.minAngle : 30;
+        this.maxAngle = data.maxAngle !== undefined ? data.maxAngle : 310;
+
+        // Set initial angle safely within min/max bounds if partial
+        if (this.isPartial) {
+            this.currentAngle = this.minAngle + Math.random() * (this.maxAngle - this.minAngle);
+        } else {
+            this.currentAngle = Math.floor(Math.random() * 360);
+        }
+
         this.locked = false;
         this.isSpinning = false;
 
@@ -26,12 +41,34 @@ class Ring {
         this.dots = (data.dots || []).map(d => new Dot(d));
     }
 
+    /**
+     * Continuous rotation & ping-pong bounce update loop
+     */
     update(deltaTime) {
         if (this.locked || !this.isSpinning) return;
-        const deltaAngle = this.rotationSpeed * this.direction * deltaTime;
-        this.currentAngle = Utils.normalizeAngle(this.currentAngle + deltaAngle);
+
+        if (this.isPartial) {
+            const step = this.rotationSpeed * this.direction * deltaTime;
+            let nextAngle = this.currentAngle + step;
+
+            if (this.direction > 0 && nextAngle >= this.maxAngle) {
+                this.currentAngle = this.maxAngle;
+                this.direction = -1; // Bounce backwards!
+            } else if (this.direction < 0 && nextAngle <= this.minAngle) {
+                this.currentAngle = this.minAngle;
+                this.direction = 1; // Bounce forwards!
+            } else {
+                this.currentAngle = Utils.normalizeAngle(nextAngle);
+            }
+        } else {
+            const deltaAngle = this.rotationSpeed * this.direction * deltaTime;
+            this.currentAngle = Utils.normalizeAngle(this.currentAngle + deltaAngle);
+        }
     }
 
+    /**
+     * Check Hit Condition for this Ring
+     */
     checkHit() {
         if (this.dots.length === 0) return true;
 
@@ -65,10 +102,16 @@ class Ring {
     render(ctx, cx, cy, isActiveRing, imageLoader = null) {
         ctx.save();
 
-        // 1. Draw Circular Orbit Path
+        // 1. Draw Circular / Partial Orbit Path
         ctx.beginPath();
-        ctx.arc(cx, cy, this.radius, 0, Math.PI * 2);
-        
+        if (this.isPartial) {
+            const startRad = Utils.degToRad(this.minAngle);
+            const endRad = Utils.degToRad(this.maxAngle);
+            ctx.arc(cx, cy, this.radius, startRad, endRad, false);
+        } else {
+            ctx.arc(cx, cy, this.radius, 0, Math.PI * 2);
+        }
+
         if (this.locked) {
             ctx.strokeStyle = CONFIG.COLORS.lockedTrack;
             ctx.lineWidth = 3;
@@ -85,6 +128,23 @@ class Ring {
             ctx.shadowBlur = 0;
         }
         ctx.stroke();
+
+        // If Partial Ring, draw boundary cap stoppers at minAngle and maxAngle
+        if (this.isPartial) {
+            const pMin = Utils.polarToCartesian(cx, cy, this.radius, this.minAngle);
+            const pMax = Utils.polarToCartesian(cx, cy, this.radius, this.maxAngle);
+
+            ctx.save();
+            ctx.shadowColor = CONFIG.COLORS.pink;
+            ctx.shadowBlur = 8;
+            ctx.fillStyle = CONFIG.COLORS.pink;
+
+            ctx.beginPath();
+            ctx.arc(pMin.x, pMin.y, 4.5, 0, Math.PI * 2);
+            ctx.arc(pMax.x, pMax.y, 4.5, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+        }
 
         // 2. Render Arcs
         this.arcs.forEach(arc => {
