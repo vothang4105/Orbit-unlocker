@@ -85,7 +85,6 @@ class GameManager {
     }
 
     init() {
-        // Preload fruit icons
         this.imageLoader.preloadAll(() => {
             console.log("Fruit images preloaded successfully!");
         });
@@ -95,18 +94,15 @@ class GameManager {
     }
 
     setupEventListeners() {
-        // Sound toggle
         this.dom.btnSound.addEventListener('click', () => {
             const isMuted = this.sound.toggleMute();
             this.dom.btnSound.textContent = isMuted ? '🔇' : '🔊';
         });
 
-        // Home button
         this.dom.btnMenu.addEventListener('click', () => {
             this.showMainMenu();
         });
 
-        // Mode / Theme Tabs
         this.dom.tabModeCyber.addEventListener('click', () => {
             this.setThemeMode(CONFIG.THEMES.CYBER);
         });
@@ -115,7 +111,6 @@ class GameManager {
             this.setThemeMode(CONFIG.THEMES.FRUIT);
         });
 
-        // Main Menu Buttons
         this.dom.btnMenuStart.addEventListener('click', () => {
             this.openPlayerModal();
         });
@@ -132,7 +127,6 @@ class GameManager {
             this.dom.helpModal.classList.add('hidden');
         });
 
-        // Player Selection Modal Actions
         this.dom.btnCreatePlayer.addEventListener('click', () => {
             const name = this.dom.inputPlayerName.value;
             const player = this.playerMgr.addPlayer(name);
@@ -162,12 +156,10 @@ class GameManager {
             this.dom.playerModal.classList.add('hidden');
         });
 
-        // Leaderboard Modal Close
         this.dom.btnCloseLeaderboard.addEventListener('click', () => {
             this.dom.leaderboardModal.classList.add('hidden');
         });
 
-        // Game Over / Win Modal Buttons
         this.dom.goBtnNext.addEventListener('click', () => {
             this.dom.gameOverModal.classList.add('hidden');
             if (this.state === 'LEVEL_COMPLETE') {
@@ -175,7 +167,6 @@ class GameManager {
                 const nextLvl = (this.currentLevelIndex + 1) % levels.length;
                 this.startLevel(nextLvl);
             } else {
-                // Retry current level on Game Over
                 this.startLevel(this.currentLevelIndex);
             }
         });
@@ -234,7 +225,8 @@ class GameManager {
         players.forEach(p => {
             const opt = document.createElement('option');
             opt.value = p.id;
-            opt.textContent = `${p.name} (Điểm cao: ${p.highScore} - Lv ${p.maxLevel})`;
+            // Short concise format to avoid select box overflow on mobile
+            opt.textContent = `${p.name} | ${p.highScore}đ - Lv${p.maxLevel}`;
             if (p.id === this.playerMgr.activePlayerId) {
                 opt.selected = true;
             }
@@ -272,7 +264,6 @@ class GameManager {
         const levels = this.getCurrentLevels();
         const levelData = levels[levelIndex] || levels[0];
 
-        // Instantiate Rings
         this.rings = levelData.rings.map((rData, idx) => new Ring(rData, idx));
         this.groups = levelData.groups || [[0]];
         this.activeGroupIndex = 0;
@@ -285,7 +276,6 @@ class GameManager {
 
         this.updateSpinningStates();
 
-        // UI Setup
         this.dom.mainMenuModal.classList.add('hidden');
         this.dom.gameOverModal.classList.add('hidden');
         this.dom.ringStatusOverlay.classList.remove('hidden');
@@ -325,7 +315,6 @@ class GameManager {
         this.dom.scoreDisplay.textContent = this.score.toString().padStart(4, '0');
         this.dom.comboDisplay.textContent = `x${this.combo}`;
 
-        // Render Hearts for Lives
         let heartsStr = '';
         for (let i = 0; i < CONFIG.MAX_LIVES; i++) {
             heartsStr += i < this.lives ? '❤️' : '🖤';
@@ -337,9 +326,6 @@ class GameManager {
         this.dom.activeRingIndex.textContent = `Vòng ${displayGroupStr} / ${this.rings.length}`;
     }
 
-    /**
-     * User Action: Lock active ring group (SPACE / ENTER / Touch)
-     */
     attemptUnlock() {
         if (this.state !== 'PLAYING') return;
 
@@ -349,7 +335,6 @@ class GameManager {
         const allHit = activeGroup.every(ringIdx => this.rings[ringIdx].checkHit());
 
         if (allHit) {
-            // TIMING SUCCESS!
             activeGroup.forEach(ringIdx => {
                 const ring = this.rings[ringIdx];
                 ring.setLocked(true);
@@ -363,26 +348,22 @@ class GameManager {
             this.activeGroupIndex++;
 
             if (this.activeGroupIndex >= this.groups.length) {
-                // ALL GROUPS COMPLETE -> WIN LEVEL!
                 this.handleLevelComplete();
             } else {
                 this.updateSpinningStates();
                 this.updateHUD();
             }
         } else {
-            // MISSED TIMING! PENALTY APPLIED
             this.sound.playError();
             this.screenShakeTime = 0.3;
             this.combo = 1;
 
-            // Deduct score & deduct life
             this.score = Math.max(0, this.score - CONFIG.MISS_PENALTY_SCORE);
             this.mistakes++;
             this.lives--;
 
             this.updateHUD();
 
-            // Check Game Over condition (3 Mistakes)
             if (this.mistakes >= CONFIG.MAX_LIVES || this.lives <= 0) {
                 this.handleGameOver("Bạn đã bấm sai 3 lần quá số lượt cho phép!");
             }
@@ -442,7 +423,7 @@ class GameManager {
         const cx = CONFIG.CANVAS_BASE_SIZE / 2;
         const cy = CONFIG.CANVAS_BASE_SIZE / 2;
         const count = 35;
-        const pColor = this.currentTheme === CONFIG.THEMES.FRUIT ? CONFIG.COLORS.cyan : CONFIG.COLORS.cyan;
+        const pColor = CONFIG.COLORS.cyan;
 
         for (let i = 0; i < count; i++) {
             const angle = (i / count) * Math.PI * 2;
@@ -464,7 +445,6 @@ class GameManager {
             this.rings.forEach(ring => ring.update(deltaTime));
         }
 
-        // Particles
         for (let i = this.particles.length - 1; i >= 0; i--) {
             const p = this.particles[i];
             p.x += p.vx;
@@ -495,20 +475,15 @@ class GameManager {
 
         ctx.clearRect(0, 0, size, size);
 
-        // 1. Radial Guide Spokes
         this.renderSpokes(ctx, cx, cy);
-
-        // 2. Center Core
         this.renderCenterCore(ctx, cx, cy);
 
-        // 3. Render Rings (Inner to Outer)
         const activeSet = new Set(this.getActiveGroup());
         this.rings.forEach((ring, idx) => {
             const isActiveGroup = activeSet.has(idx) && this.state === 'PLAYING';
             ring.render(ctx, cx, cy, isActiveGroup, this.imageLoader);
         });
 
-        // 4. Render Particles
         this.renderParticles(ctx);
 
         ctx.restore();
